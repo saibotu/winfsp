@@ -56,10 +56,11 @@ extern "C" {
 #define FUSE_IOCTL_RETRY                (1 << 2)
 #define FUSE_IOCTL_MAX_IOV              256
 
+#if defined(_WIN64)
 struct fuse_file_info
 {
     int flags;
-    unsigned int fh_old;
+    uint64_t fh_old;
     int writepage;
     unsigned int direct_io:1;
     unsigned int keep_cache:1;
@@ -69,6 +70,21 @@ struct fuse_file_info
     uint64_t fh;
     uint64_t lock_owner;
 };
+#else
+struct fuse_file_info
+{
+    int flags;
+    uint32_t fh_old;
+    int writepage;
+    unsigned int direct_io:1;
+    unsigned int keep_cache:1;
+    unsigned int flush:1;
+    unsigned int nonseekable:1;
+    unsigned int padding:28;
+    uint64_t fh;
+    uint64_t lock_owner;
+};
+#endif
 
 struct fuse_conn_info
 {
